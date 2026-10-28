@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#12395c" />
+    <meta
+      name="description"
+      content="Registro de fiscalizaciones de práctica con anexo fotográfico y exportación a Word."
+    />
+    <title>Fiscalización fotográfica · Anexo Word</title>
+    <link rel="stylesheet" href="/css/estilos.css" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2312395c'/%3E%3Cpath d='M17 22h8l3-4h8l3 4h8v25H17z' fill='none' stroke='%23fff' stroke-width='3' stroke-linejoin='round'/%3E%3Ccircle cx='32' cy='34' r='7' fill='none' stroke='%23fff' stroke-width='3'/%3E%3C/svg%3E" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="app-header__inner">
+        <div class="brand">
+          <div class="brand__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M4 8.5h3l1.5-2h7L17 8.5h3v10H4z" stroke-linejoin="round" />
+              <circle cx="12" cy="13.5" r="3.2" />
+            </svg>
+          </div>
+          <div>
+            <p class="brand__eyebrow">Registro de práctica</p>
+            <h1 class="brand__title">Fiscalización fotográfica</h1>
+          </div>
+        </div>
+        <div class="header-status">
+          <span class="status-dot" id="status-dot" aria-hidden="true"></span>
+          <span id="save-status" role="status" aria-live="polite">Iniciando almacenamiento…</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="app-main">
+      <section class="toolbar" aria-label="Proyecto activo">
+        <div class="toolbar__project">
+          <label for="project-select">Proyecto</label>
+          <select id="project-select" class="project-select" aria-describedby="project-hint">
+            <option value="">Cargando proyectos…</option>
+          </select>
+          <span class="hint" id="project-hint">Los datos y fotografías se guardan en este navegador.</span>
+        </div>
+        <div class="toolbar__actions">
+          <button type="button" class="btn btn--secondary" id="btn-new-project">
+            <span aria-hidden="true">＋</span> Nuevo proyecto
+          </button>
+          <button type="button" class="btn btn--secondary" id="btn-preview" disabled>
+            <span aria-hidden="true">▤</span> Vista previa
+          </button>
+          <button type="button" class="btn btn--primary" id="btn-word" disabled>
+            <span aria-hidden="true">↓</span> Generar Word
+          </button>
+        </div>
+      </section>
+
+      <div class="workspace">
+        <div class="workspace__main">
+          <section class="card project-card" aria-labelledby="project-title">
+            <div class="card__header">
+              <div>
+                <p class="section-kicker">Paso 1</p>
+                <h2 id="project-title">Datos de la fiscalización</h2>
+              </div>
+              <span class="badge badge--muted" id="project-mode-badge">Sin proyecto</span>
+            </div>
+
+            <form class="project-form" id="project-form" novalidate>
+              <div class="field">
+                <label for="codigo">Código de práctica <span class="required" aria-hidden="true">*</span></label>
+                <input id="codigo" name="codigoPractica" type="text" maxlength="60" autocomplete="off" placeholder="Ej. PF-2026-001" required />
+              </div>
+              <div class="field">
+                <label for="fecha">Fecha de fiscalización <span class="required" aria-hidden="true">*</span></label>
+                <input id="fecha" name="fechaFiscalizacion" type="date" required />
+              </div>
+              <div class="field">
+                <label for="fiscalizador">Fiscalizador <span class="required" aria-hidden="true">*</span></label>
+                <input id="fiscalizador" name="fiscalizador" type="text" maxlength="100" autocomplete="name" placeholder="Nombre y apellidos" required />
+              </div>
+              <div class="field">
+                <label for="lugar">Lugar <span class="required" aria-hidden="true">*</span></label>
+                <input id="lugar" name="lugar" type="text" maxlength="140" placeholder="Distrito, provincia, región" required />
+              </div>
+              <div class="field field--wide">
+                <label for="establecimiento">Establecimiento o unidad fiscalizada <span class="required" aria-hidden="true">*</span></label>
+                <input id="establecimiento" name="establecimiento" type="text" maxlength="160" placeholder="Denominación ficticia del establecimiento" required />
+              </div>
+            </form>
+
+            <div class="form-footer">
+              <p class="form-footer__hint"><span class="required">*</span> Campos obligatorios. Las fotografías pueden quedar como borrador hasta completar sus descripciones.</p>
+              <button type="button" class="btn btn--primary" id="btn-save-project">Guardar datos</button>
+            </div>
+          </section>
+
+          <section class="card photos-card" aria-labelledby="photos-title">
+            <div class="card__header card__header--stack">
+              <div>
+                <p class="section-kicker">Paso 2</p>
+                <h2 id="photos-title">Fotografías del proyecto</h2>
+                <p class="card__subtitle" id="photos-summary">Crea o abre un proyecto para comenzar.</p>
+              </div>
+              <div class="photo-actions">
+                <button type="button" class="btn btn--camera" id="btn-camera" disabled>
+                  <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M4 8.5h3l1.5-2h7L17 8.5h3v10H4z" stroke-linejoin="round" />
+                    <circle cx="12" cy="13.5" r="3.2" />
+                  </svg>
+                  Tomar foto
+                </button>
+                <button type="button" class="btn btn--secondary" id="btn-files" disabled>
+                  <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M4 6.5h6l2 2h8v9H4z" stroke-linejoin="round" />
+                    <path d="M12 11v4.5M9.8 13.2h4.4" stroke-linecap="round" />
+                  </svg>
+                  Agregar imágenes
+                </button>
+              </div>
+            </div>
+
+            <input id="input-camera" class="visually-hidden" type="file" accept="image/*" capture="environment" aria-label="Tomar una fotografía con la cámara" />
+            <input id="input-files" class="visually-hidden" type="file" accept="image/*" multiple aria-label="Seleccionar imágenes del dispositivo" />
+
+            <div class="photos-layout">
+              <div class="gallery-panel">
+                <div class="gallery-toolbar">
+                  <p class="gallery-legend"><span class="number-chip">01</span> El número se actualiza según el orden.</p>
+                  <span class="pending-count" id="pending-count" hidden></span>
+                </div>
+                <div class="gallery" id="photo-gallery" aria-live="polite"></div>
+              </div>
+
+              <aside class="inspector" aria-label="Vista previa de la fotografía seleccionada">
+                <div class="inspector__header">
+                  <h3>Vista previa</h3>
+                  <span class="badge badge--muted" id="photo-position">Sin selección</span>
+                </div>
+                <div class="inspector__body" id="inspector-body">
+                  <div class="empty-state empty-state--small">
+                    <div class="empty-state__icon" aria-hidden="true">◫</div>
+                    <p>Selecciona una fotografía de la galería para revisar su descripción y apariencia en el anexo.</p>
+                  </div>
+                </div>
+              </aside>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <footer class="app-footer">
+      <p>Los datos se guardan solo en este navegador (IndexedDB). No se envían a un servidor.</p>
+      <p id="storage-note">La fecha de incorporación registrada por la app no certifica la fecha de captura original.</p>
+    </footer>
+
+    <!-- Modal de vista previa de archivos antes de incorporar -->
+    <dialog class="dialog dialog--wide" id="dialog-files" aria-labelledby="dialog-files-title">
+      <div class="dialog__header">
+        <div>
+          <p class="section-kicker">Confirmar incorporación</p>
+          <h2 id="dialog-files-title">Revisa las imágenes</h2>
+        </div>
+        <button type="button" class="icon-btn" data-close-dialog aria-label="Cerrar">✕</button>
+      </div>
+      <div class="dialog__body">
+        <p class="dialog__lead">Puedes quitar imágenes y escribir una descripción inicial. Las descripciones podrán editarse después.</p>
+        <div class="file-preview-list" id="file-preview-list"></div>
+      </div>
+      <div class="dialog__footer">
+        <p class="dialog__hint" id="file-preview-count"></p>
+        <div class="dialog__actions">
+          <button type="button" class="btn btn--secondary" data-close-dialog>Cancelar</button>
+          <button type="button" class="btn btn--primary" id="btn-confirm-files">Confirmar e incorporar</button>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- Modal de vista previa del anexo -->
+    <dialog class="dialog dialog--preview" id="dialog-preview" aria-labelledby="dialog-preview-title">
+      <div class="dialog__header">
+        <div>
+          <p class="section-kicker">Vista previa de exportación</p>
+          <h2 id="dialog-preview-title">Anexo fotográfico</h2>
+        </div>
+        <button type="button" class="icon-btn" data-close-dialog aria-label="Cerrar">✕</button>
+      </div>
+      <div class="dialog__body dialog__body--preview">
+        <div id="anexo-preview"></div>
+      </div>
+      <div class="dialog__footer">
+        <p class="dialog__hint">Así se organizarán las fotografías en el archivo Word. Se muestran dos por página.</p>
+        <div class="dialog__actions">
+          <button type="button" class="btn btn--secondary" data-close-dialog>Cerrar</button>
+          <button type="button" class="btn btn--primary" id="btn-word-preview">Generar Word</button>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- Modal de alertas y validaciones -->
+    <dialog class="dialog" id="dialog-alert" aria-labelledby="dialog-alert-title">
+      <div class="dialog__header">
+        <div>
+          <p class="section-kicker" id="dialog-alert-kicker">Aviso</p>
+          <h2 id="dialog-alert-title">Mensaje</h2>
+        </div>
+        <button type="button" class="icon-btn" data-close-dialog aria-label="Cerrar">✕</button>
+      </div>
+      <div class="dialog__body" id="dialog-alert-body"></div>
+      <div class="dialog__footer dialog__footer--end">
+        <button type="button" class="btn btn--primary" data-close-dialog>Aceptar</button>
+      </div>
+    </dialog>
+
+    <!-- Modal de confirmación -->
+    <dialog class="dialog" id="dialog-confirm" aria-labelledby="dialog-confirm-title">
+      <div class="dialog__header">
+        <div>
+          <p class="section-kicker">Confirmación</p>
+          <h2 id="dialog-confirm-title">¿Continuar?</h2>
+        </div>
+        <button type="button" class="icon-btn" data-cancel-confirm aria-label="Cerrar">✕</button>
+      </div>
+      <div class="dialog__body">
+        <p id="dialog-confirm-message">Esta acción no se puede deshacer.</p>
+      </div>
+      <div class="dialog__footer dialog__footer--end">
+        <button type="button" class="btn btn--secondary" data-cancel-confirm>Cancelar</button>
+        <button type="button" class="btn btn--danger" id="btn-confirm-action">Confirmar</button>
+      </div>
+    </dialog>
+
+    <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="false"></div>
+
+    <script type="module" src="/js/app.js"></script>
+  </body>
+</html>
